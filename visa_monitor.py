@@ -200,7 +200,6 @@ class VisaAppointmentMonitor:
 
             # Use Chromium headless shell
             self.browser = playwright.chromium.launch(
-                executable_path=chromium_path,
                 headless=True,
                 args=[
                     '--no-sandbox',
@@ -298,6 +297,7 @@ if __name__ == "__main__":
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
     monitor.run_monitor(check_interval=1800)
+
 
 
 
