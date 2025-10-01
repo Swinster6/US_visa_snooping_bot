@@ -1,0 +1,25 @@
+services:
+  - type: cron
+    name: visa-appointment-monitor
+    env: python
+    region: oregon
+    plan: free
+    schedule: "*/30 * * * *"
+    buildCommand: |
+      pip install -r requirements.txt
+      python -m playwright install chromium
+      python -m playwright install-deps
+    startCommand: python check_once.py
+    envVars:
+      - key: VISA_EMAIL
+        sync: false
+      - key: VISA_PASSWORD
+        sync: false
+      - key: NOTIFICATION_EMAIL
+        sync: false
+      - key: SMTP_EMAIL
+        sync: false
+      - key: SMTP_APP_PASSWORD
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.0
