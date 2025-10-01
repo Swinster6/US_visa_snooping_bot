@@ -78,23 +78,52 @@ class VisaAppointmentMonitor:
             # Fill password
             self.page.fill("#user_password", self.password)
 
-            # Accept terms if checkbox exists
+            # Accept terms checkbox - click the label
             try:
+                logging.info("Looking for policy checkbox...")
+                # Wait for the checkbox to be available
+                self.page.wait_for_selector("#policy_confirmed", timeout=5000)
+
+                # Check if it's not already checked
                 if not self.page.is_checked("#policy_confirmed"):
-                    self.page.check("#policy_confirmed")
-            except:
-                pass
+                    logging.info("Checking policy checkbox by clicking label...")
+                    # Click the label instead of the checkbox directly
+                    self.page.click("label[for='policy_confirmed']")
+                    self.page.wait_for_timeout(500)  # Brief wait for the check to register
+                    logging.info("Policy checkbox checked successfully")
+                else:
+                    logging.info("Policy checkbox already checked")
+
+            except PlaywrightTimeout:
+                logging.warning("Policy checkbox not found - it may not be required")
+            except Exception as e:
+                logging.warning(f"Could not check policy checkbox: {str(e)}")
 
             # Click sign in
+            logging.info("Clicking sign in button...")
             self.page.click("input[name='commit']")
             logging.info("Login submitted")
 
+            # Wait for navigation to complete
             self.page.wait_for_timeout(3000)
+
+            # Verify login was successful
+            try:
+                # Check if we're on the continue page or still on login
+                current_url = self.page.url
+                logging.info(f"Current URL after login: {current_url}")
+
+                if "sign_in" in current_url:
+                    logging.error("Still on login page - login may have failed")
+                    return False
+            except:
+                pass
+
             return True
+
         except Exception as e:
             logging.error(f"Login failed: {str(e)}")
             return False
-
     def navigate_to_reschedule(self):
         """Navigate to the reschedule appointment page"""
         try:
@@ -166,7 +195,7 @@ class VisaAppointmentMonitor:
         try:
             playwright = sync_playwright().start()
             self.browser = playwright.chromium.launch(
-                headless=True,
+                headless=False,
                 args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
             )
 
