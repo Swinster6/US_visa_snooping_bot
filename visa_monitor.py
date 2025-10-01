@@ -189,7 +189,8 @@ class VisaAppointmentMonitor:
             logging.error(f"Availability check failed: {str(e)}")
             return False
 
-def check_appointments(self):
+
+    def check_appointments(self):
     """Main method to check for appointments"""
     playwright = None
     try:
@@ -250,6 +251,8 @@ def check_appointments(self):
         if playwright:
             playwright.stop()
 
+
+
     def run_monitor(self, check_interval=1800):
         """
         Run the monitor continuously
@@ -299,6 +302,7 @@ if __name__ == "__main__":
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
     monitor.run_monitor(check_interval=1800)
+
 
 
 
