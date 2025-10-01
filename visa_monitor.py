@@ -189,54 +189,66 @@ class VisaAppointmentMonitor:
             logging.error(f"Availability check failed: {str(e)}")
             return False
 
-    def check_appointments(self):
-        """Main method to check for appointments"""
-        playwright = None
-        try:
-            playwright = sync_playwright().start()
-            # Use Chromium
-            self.browser = playwright.chromium.launch(
-                headless=True,
-                args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-            )
+def check_appointments(self):
+    """Main method to check for appointments"""
+    playwright = None
+    try:
+        playwright = sync_playwright().start()
 
-            context = self.browser.new_context(
-                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0'
-            )
-            self.page = context.new_page()
+        # Path to Chromium Headless Shell in Render
+        chromium_path = os.path.expanduser(
+            "~/.cache/ms-playwright/chromium_headless_shell-1187/chrome-linux/headless_shell"
+        )
 
-            if not self.login():
-                return False
+        # Use Chromium headless shell
+        self.browser = playwright.chromium.launch(
+            executable_path=chromium_path,  # <-- ADD THIS LINE
+            headless=True,
+            args=[
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-blink-features=AutomationControlled'
+            ]
+        )
 
-            if not self.navigate_to_reschedule():
-                return False
+        context = self.browser.new_context(
+            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0'
+        )
+        self.page = context.new_page()
 
-            is_available = self.check_reschedule_availability()
-
-            if is_available == False:
-                message = f"🎉 APPOINTMENT AVAILABLE!\n\n"
-                message += f"The Reschedule button is now ENABLED in Calgary!\n"
-                message += f"This means appointment slots have opened up.\n\n"
-                message += f"Log in immediately to book your appointment:\n"
-                message += f"https://ais.usvisa-info.com/en-ca/niv/users/sign_in"
-
-                self.send_notification(
-                    "🚨 US Visa Appointment Available in Calgary!",
-                    message
-                )
-                return True
-            else:
-                logging.info("No available appointments - system is busy or button disabled")
-                return False
-
-        except Exception as e:
-            logging.error(f"Check failed: {str(e)}")
+        if not self.login():
             return False
-        finally:
-            if self.browser:
-                self.browser.close()
-            if playwright:
-                playwright.stop()
+
+        if not self.navigate_to_reschedule():
+            return False
+
+        is_available = self.check_reschedule_availability()
+
+        if is_available == False:
+            message = f"🎉 APPOINTMENT AVAILABLE!\n\n"
+            message += f"The Reschedule button is now ENABLED in Calgary!\n"
+            message += f"This means appointment slots have opened up.\n\n"
+            message += f"Log in immediately to book your appointment:\n"
+            message += f"https://ais.usvisa-info.com/en-ca/niv/users/sign_in"
+
+            self.send_notification(
+                "🚨 US Visa Appointment Available in Calgary!",
+                message
+            )
+            return True
+        else:
+            logging.info("No available appointments - system is busy or button disabled")
+            return False
+
+    except Exception as e:
+        logging.error(f"Check failed: {str(e)}")
+        return False
+    finally:
+        if self.browser:
+            self.browser.close()
+        if playwright:
+            playwright.stop()
 
     def run_monitor(self, check_interval=1800):
         """
@@ -287,6 +299,7 @@ if __name__ == "__main__":
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
     monitor.run_monitor(check_interval=1800)
+
 
 
 
