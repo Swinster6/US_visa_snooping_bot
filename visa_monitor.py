@@ -219,7 +219,7 @@ class VisaAppointmentMonitor:
 
             is_available = self.check_reschedule_availability()
 
-            if is_available == False:
+            if is_available:
                 message = f"🎉 APPOINTMENT AVAILABLE!\n\n"
                 message += f"The Reschedule button is now ENABLED in Calgary!\n"
                 message += f"This means appointment slots have opened up.\n\n"
@@ -245,12 +245,12 @@ class VisaAppointmentMonitor:
                 playwright.stop()
 
     
-    def run_monitor(self, check_interval=900):
+    def run_monitor(self, check_interval=1800):
         """
         Run the monitor continuously
 
         Args:
-            check_interval: Time between checks in seconds (default: 900 = 15 minutes)
+            check_interval: Time between checks in seconds (default: 1800 = 30 minutes)
         """
         logging.info("Starting visa appointment monitor...")
         self.send_notification(
@@ -293,7 +293,8 @@ if __name__ == "__main__":
     )
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
-    monitor.run_monitor(check_interval=900)
+    monitor.run_monitor(check_interval=1800)
+
 
 
 
