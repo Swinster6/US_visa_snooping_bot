@@ -194,13 +194,14 @@ class VisaAppointmentMonitor:
         playwright = None
         try:
             playwright = sync_playwright().start()
-            self.browser = playwright.chromium.launch(
+            # Use Firefox instead of Chromium
+            self.browser = playwright.firefox.launch(
                 headless=True,
                 args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
             )
 
             context = self.browser.new_context(
-                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0'
             )
             self.page = context.new_page()
 
@@ -286,4 +287,5 @@ if __name__ == "__main__":
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
     monitor.run_monitor(check_interval=1800)
+
 
