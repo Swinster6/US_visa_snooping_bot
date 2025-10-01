@@ -196,9 +196,7 @@ class VisaAppointmentMonitor:
             playwright = sync_playwright().start()
 
             # Path to Chromium Headless Shell in Render
-            chromium_path = os.path.expanduser(
-                "~/.cache/ms-playwright/chromium_headless_shell-1187/chrome-linux/headless_shell"
-            )
+            chromium_path = "/opt/render/.cache/ms-playwright/chromium_headless_shell-1187/chromium/headless_shell"
 
             # Use Chromium headless shell
             self.browser = playwright.chromium.launch(
@@ -300,6 +298,7 @@ if __name__ == "__main__":
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
     monitor.run_monitor(check_interval=1800)
+
 
 
 
