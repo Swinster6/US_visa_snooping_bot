@@ -219,7 +219,7 @@ class VisaAppointmentMonitor:
 
             is_available = self.check_reschedule_availability()
 
-            if is_available == FALSE:
+            if is_available == False:
                 message = f"🎉 APPOINTMENT AVAILABLE!\n\n"
                 message += f"The Reschedule button is now ENABLED in Calgary!\n"
                 message += f"This means appointment slots have opened up.\n\n"
@@ -294,6 +294,7 @@ if __name__ == "__main__":
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
     monitor.run_monitor(check_interval=900)
+
 
 
 
