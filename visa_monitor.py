@@ -169,7 +169,7 @@ class VisaAppointmentMonitor:
             if error_div.is_visible():
                 logging.info("System is busy - no appointments available")
                 return False
-             else:
+            else:
                 logging.info("🎉 No 'system busy' message visible - appointments may be available!")
                 return True
         except Exception as e:
@@ -281,6 +281,7 @@ if __name__ == "__main__":
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
     monitor.run_monitor(check_interval=1800)
+
 
 
 
