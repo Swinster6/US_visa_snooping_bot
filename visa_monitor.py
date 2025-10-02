@@ -164,27 +164,14 @@ class VisaAppointmentMonitor:
 
             # Check for the error message
             logging.info("Checking for system busy message...")
-            try:
-                error_element = self.page.locator("//*[contains(text(), 'System is busy. Please try again later.')]")
-                if error_element.is_visible():
-                    logging.info("System is busy - no appointments available")
-                    return False
-            except:
-                logging.info("No 'system busy' message found - good sign!")
+            error_div = self.page.locator("consulate_date_time_not_available")
+
+            if error_div.is_visible():
+                logging.info("System is busy - no appointments available")
+                return False
+             else:
+                logging.info("🎉 No 'system busy' message visible - appointments may be available!")
                 return True
-
-            # Check if the Reschedule button is enabled
-    #        logging.info("Checking if Reschedule button is enabled...")
-     #       reschedule_button = self.page.locator("#appointments_submit")
-#
- #           is_disabled = reschedule_button.get_attribute("disabled")
-#
- #           if is_disabled:
-  #              logging.info("Reschedule button is disabled - no appointments available")
-   ##        else:
-     #           logging.info("🎉 Reschedule button is ENABLED - appointments are available!")
-      #          return True
-
         except Exception as e:
             logging.error(f"Availability check failed: {str(e)}")
             return False
@@ -294,6 +281,7 @@ if __name__ == "__main__":
 
     # Run every 30 minutes (1800 seconds) - adjust as needed
     monitor.run_monitor(check_interval=1800)
+
 
 
 
